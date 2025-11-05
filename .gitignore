@@ -1,0 +1,29 @@
+# Virtual env
+venv/
+ENV/
+env/
+
+# Dataset
+data/
+*.csv
+*.xlsx
+*.zip
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter Notebook checkpoints (if any)
+.ipynb_checkpoints/
+
+# Model files
+models/
+*.h5
+*.pkl
+*.pt
+*.joblib
+
+# Results folder (optional)
+results/
