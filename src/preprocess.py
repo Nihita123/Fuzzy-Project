@@ -90,7 +90,8 @@ def prepare_dataset(path, verbose=True):
     else:
         X = df_scaled[numeric_features]
 
-    y = df_scaled['fluoride_class']
+    y = df['fluoride_class'].astype(int)
+
 
     if verbose:
         print(f"Dataset Shape: {df.shape}")
@@ -98,4 +99,6 @@ def prepare_dataset(path, verbose=True):
         print(f"Categorical Features: {categorical_features}")
         print(f"Number of NaNs after preprocessing: {X.isna().sum().sum()}")
 
-    return X, y, df, features, target_col, scaler
+    return X, y, df_scaled[target_col], df, features, target_col, scaler, encoder
+
+

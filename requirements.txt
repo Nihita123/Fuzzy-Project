@@ -1,7 +1,8 @@
-pandas
 numpy
-scikit-learn
+pandas
 matplotlib
-seaborn
-scikit-fuzzy
+scikit-learn
 joblib
+xgboost
+lightgbm
+tensorflow
