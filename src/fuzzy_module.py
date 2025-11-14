@@ -3,46 +3,50 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
 def fuzzy_classify_fluoride(fluoride_value):
-    """
-    Classifies fluoride level using fuzzy logic:
-    Input: fluoride_value (mg/L)
-    Output: (Label, Risk_Score)
-    """
-
-    # Input variable
-    fluoride = ctrl.Antecedent(np.arange(0, 3.1, 0.1), 'fluoride')
-
-    # Output variable
+    # ---------- UNIVERSE ----------
+    fluoride = ctrl.Antecedent(np.arange(0, 4.1, 0.01), 'fluoride')
     risk = ctrl.Consequent(np.arange(0, 101, 1), 'risk')
 
-    # Membership functions
-    fluoride['low'] = fuzz.trimf(fluoride.universe, [0, 0, 0.6])
-    fluoride['normal'] = fuzz.trimf(fluoride.universe, [0.4, 0.8, 1.2])
-    fluoride['high'] = fuzz.trimf(fluoride.universe, [1.0, 3.0, 3.0])
+    # ---------- MEMBERSHIP FUNCTIONS ----------
+    # Smooth, continuous, overlapping — NO GAPS
+    fluoride['very_low']  = fuzz.trimf(fluoride.universe, [0.0, 0.0, 0.5])
+    fluoride['low']       = fuzz.trimf(fluoride.universe, [0.3, 0.7, 1.1])
+    fluoride['normal']    = fuzz.trimf(fluoride.universe, [0.9, 1.5, 2.1])
+    fluoride['high']      = fuzz.trimf(fluoride.universe, [1.8, 2.4, 3.0])
+    fluoride['very_high'] = fuzz.trimf(fluoride.universe, [2.8, 3.5, 4.0])
 
-    risk['safe'] = fuzz.trimf(risk.universe, [0, 0, 40])
-    risk['moderate'] = fuzz.trimf(risk.universe, [30, 50, 70])
-    risk['danger'] = fuzz.trimf(risk.universe, [60, 100, 100])
+    # Risk membership
+    risk['low']      = fuzz.trimf(risk.universe, [0, 0, 40])
+    risk['medium']   = fuzz.trimf(risk.universe, [20, 50, 80])
+    risk['high']     = fuzz.trimf(risk.universe, [60, 100, 100])
 
-    # Fuzzy rules
-    rule1 = ctrl.Rule(fluoride['low'], risk['safe'])
-    rule2 = ctrl.Rule(fluoride['normal'], risk['moderate'])
-    rule3 = ctrl.Rule(fluoride['high'], risk['danger'])
+    # ---------- RULES ----------
+    rule1 = ctrl.Rule(fluoride['very_low'],  risk['low'])
+    rule2 = ctrl.Rule(fluoride['low'],       risk['medium'])
+    rule3 = ctrl.Rule(fluoride['normal'],    risk['low'])
+    rule4 = ctrl.Rule(fluoride['high'],      risk['medium'])
+    rule5 = ctrl.Rule(fluoride['very_high'], risk['high'])
 
-    # Control system
-    risk_ctrl = ctrl.ControlSystem([rule1, rule2, rule3])
+    # ---------- CONTROL SYSTEM ----------
+    risk_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5])
     risk_sim = ctrl.ControlSystemSimulation(risk_ctrl)
-    risk_sim.input['fluoride'] = fluoride_value
-    risk_sim.compute()
 
-    risk_score = risk_sim.output['risk']
+    # ---------- INPUT ----------
+    risk_sim.input['fluoride'] = float(fluoride_value)
 
-    # Convert to category
-    if risk_score < 40:
-        label = "Low (Safe)"
-    elif risk_score < 65:
-        label = "Normal (Moderate)"
+    # ---------- COMPUTE SAFELY ----------
+    try:
+        risk_sim.compute()
+        score = risk_sim.output['risk']
+    except Exception as e:
+        return ("Computation Error", -1)
+
+    # ---------- LABEL OUTPUT ----------
+    if score < 33:
+        label = "Low Risk"
+    elif score < 66:
+        label = "Medium Risk"
     else:
-        label = "High (Dangerous)"
+        label = "High Risk"
 
-    return label, risk_score
+    return label, round(score, 2)

@@ -64,7 +64,15 @@ def get_models():
         "RF": RandomForestClassifier(
             n_estimators=300, random_state=42, class_weight='balanced'
         ),
-        "ANN": MLPClassifier(hidden_layer_sizes=(256, 128), max_iter=5000, random_state=42),
+        "ANN": MLPClassifier(
+            hidden_layer_sizes=(128, 64),
+            max_iter=300,
+            random_state=42,
+            early_stopping=True,
+            n_iter_no_change=10,
+            verbose=False
+        ),
+
         "AdaBoost": AdaBoostClassifier(
             estimator=DecisionTreeClassifier(max_depth=3, class_weight='balanced'),
             n_estimators=150,

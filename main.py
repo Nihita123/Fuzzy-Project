@@ -1,4 +1,5 @@
 import os
+import joblib
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -37,7 +38,10 @@ def main():
 
     # ✅ Train classification models
     print("\n🚀 Training classification models...")
-    results, _ = train_and_save_models(X_bal, y_bal, scaler=scaler, encoder=encoder)
+    results, splits = train_and_save_models(X_bal, y_bal, scaler=scaler, encoder=encoder)
+    X_train, X_test, y_train, y_test = splits
+
+
     print("✅ Models trained and saved in /models folder")
 
    # ✅ Train regression models
@@ -68,10 +72,31 @@ def main():
         fuzzy_results.append((location, fluoride_value, fuzzy_label, fuzzy_score))
 
     fuzzy_df = pd.DataFrame(fuzzy_results, columns=["Location", "Fluoride (mg/L)", "Risk_Label", "Risk_Score"])
-    print(fuzzy_df.head(10))
+    print(fuzzy_df.head(10))    
 
     fuzzy_df.to_csv("results/fuzzy_fluoride_summary.csv", index=False)
     print("\n✅ Fuzzy classification results saved to results/fuzzy_fluoride_summary.csv")
+
+    # ---- GROUP BY STATE ----
+    if "State" in df.columns:
+        fuzzy_df["State"] = df["State"]
+
+        state_summary = fuzzy_df.groupby("State").agg({
+            "Fluoride (mg/L)": "mean",
+            "Risk_Score": "mean",
+            "Risk_Label": lambda x: x.value_counts().to_dict()
+        })
+
+        print("\n📍 STATE-WISE FUZZY SAFETY REPORT:")
+        print(state_summary)
+
+        state_summary.to_csv("results/state_wise_fuzzy_report.csv")
+        from src.visualize_fuzzy_report import visualize_state_fuzzy_report
+        visualize_state_fuzzy_report(state_summary)
+
+    else:
+        print("⚠ State column not found — cannot group fuzzy results.")
+
 
     # --- Model performance section ---
     print("\n📊 Class distribution (original):")
@@ -83,6 +108,22 @@ def main():
     model = get_model(best_model_name)
     model.fit(X_train, y_train)
     preds = model.predict(X_test)
+    from src.visualize_ml_models import visualize_all_model_metrics
+
+    model_dir = "models"
+    results_dict = {}
+
+    for model_name in results.keys():  # keys from accuracy results
+        model_path = os.path.join(model_dir, f"{model_name}.pkl")
+        if os.path.exists(model_path):
+            model = joblib.load(model_path)
+            preds = model.predict(X_test)
+            results_dict[model_name] = (y_test, preds)
+        else:
+            print(f"⚠ Model file not found: {model_path}")
+
+    visualize_all_model_metrics(results_dict)
+
 
     print("\n📈 Classification Report:")
     print(classification_report(y_test, preds))
