@@ -1,113 +1,104 @@
-Predicting Groundwater Fluoride Levels Using Machine Learning and Fuzzy Logic
+🎯 Groundwater Fluoride Prediction Using Machine Learning & Fuzzy Logic
 
-A comprehensive framework combining Machine Learning, Regression models, and Fuzzy Logic to predict groundwater fluoride levels across India and classify regions into data-driven fluoride risk categories. This project supports large-scale groundwater quality assessment and assists decision-makers in identifying fluoride-vulnerable zones.
+A data-driven, intelligent, and scalable framework to analyze groundwater fluoride contamination across India using Machine Learning, Regression Models, and a Fuzzy Inference System (FIS).
+This system supports early detection of fluoride-vulnerable regions and helps government agencies & water-resource managers make informed decisions.
 
-🚀 Project Overview
+🌍 Project At a Glance
 
-Groundwater is a primary drinking water source in India, but elevated fluoride concentrations pose severe health risks. Traditional testing methods are slow, costly, and region-limited.
+✔ Analyzes 16,776+ groundwater samples from Indian states & districts
+✔ Predicts fluoride levels using Regression Models
+✔ Classifies water into Safe / Moderate / High-risk categories using ML
+✔ Uses Fuzzy Logic for human-interpretable risk scoring
+✔ Generates state-level analysis & heatmaps
+✔ Built for accuracy, interpretability, and large-scale deployment
 
-This project builds an integrated analytics pipeline that:
+🧠 Why This Project?
 
-Predicts fluoride levels using Regression models
+Fluoride contamination is a growing threat in Indian groundwater. Traditional testing is slow, costly, and region-limited.
+This project solves that by combining:
 
-Classifies water samples into Safe, Moderate, and High-risk using ML
+🔹 Hydrogeochemical science
+🔹 Machine Learning
+🔹 Fuzzy Logic interpretation
 
-Applies a Fuzzy Inference System (FIS) for human-interpretable risk assessment
+→ delivering a fast, flexible, and reliable digital solution.
 
-Generates state-level safety summaries and risk visualizations
+📂 Dataset Overview
 
-Using a dataset of 16,776 groundwater samples from multiple Indian states and districts, the system offers a scalable and intelligent tool for groundwater quality management.
+Each record contains:
 
-📂 Dataset Description
+Feature Type	Parameters
+Physicochemical	pH, EC, TDS, Na⁺, Ca²⁺, Mg²⁺, K⁺, Cl⁻, SO₄²⁻, NO₃⁻, HCO₃⁻
+Target	Fluoride concentration (mg/L)
+Location	State + District identifiers
 
-Each record in the dataset corresponds to a groundwater sampling point and includes:
+These features significantly impact fluoride mobility inside aquifers.
 
-Physicochemical parameters:
-pH, EC, TDS, Na⁺, Ca²⁺, Mg²⁺, K⁺, Cl⁻, SO₄²⁻, NO₃⁻, HCO₃⁻
+⚙️ Data Preprocessing Pipeline
+🔧 1. Standardization
 
-Fluoride concentration (F⁻)
+Cleans and normalizes column names (e.g., “EC µS/cm” → “EC”).
 
-State and district identifiers
+🧹 2. Invalid & Missing Values
 
-These hydrochemical variables influence fluoride mobility and are essential for predictive modeling.
+Converts “NA”, “–”, blanks to NaN
 
-🧹 Data Preprocessing Pipeline
+Uses Median Imputation for numerical stability
 
-The dataset undergoes a structured multi-stage preprocessing workflow:
+🧪 3. Fluoride Risk Label Creation
 
-✔ Standardization of Column Names
+Based on WHO drinking water standards:
 
-Removes units and symbols, detects key hydrochemical features (pH, EC, TDS, etc.) automatically.
+Class	Fluoride Level	Interpretation
+0	< 1.5 mg/L	Safe
+1	1.5–2.5 mg/L	Moderate Risk
+2	> 2.5 mg/L	High Risk
+📏 4. Scaling
 
-✔ Handling Missing and Invalid Values
+All features normalized to 0–1 range (Min–Max).
 
-Converts placeholders (NA, “–”, empty) to NaN
+🧩 5. Encode Categorical Features
 
-Uses median imputation for numerical data
+Uses One-Hot Encoding for state/district/well-type.
 
-✔ Creation of Fluoride Risk Classes
+⚖️ 6. Balancing the Dataset (SMOTE)
 
-Based on WHO standards:
+Generates synthetic minority samples → class distribution becomes perfectly balanced.
 
-Class 0: < 1.5 mg/L (Safe)
+🤖 Machine Learning Models Implemented
 
-Class 1: 1.5–2.5 mg/L (Moderate Risk)
+Seven ML algorithms were trained:
 
-Class 2: > 2.5 mg/L (High Risk)
+Model	Type	Notes
+Logistic Regression	Linear	Baseline clarity
+SVM (RBF)	Kernel	Captures nonlinearity
+ANN	Neural Network	Learns complex patterns
+AdaBoost	Ensemble	Focuses on hard samples
+XGBoost	Gradient Boosting	Fast + accurate
+LightGBM	Boosting	Efficient, large-scale
+Random Forest	Ensemble	⭐ Best classifier
+🏆 Top Performer: Random Forest Classifier
 
-✔ Feature Scaling
+🎯 Accuracy: 93%
+🎯 Strong precision, recall, and F1 across all classes
 
-Min–Max normalization to ensure uniform scale
+📈 Regression Models for Continuous Prediction
 
-✔ Encoding Categorical Features
-
-One-Hot Encoding for state/district/location-type columns
-
-✔ Handling Imbalanced Classes
-
-Uses SMOTE to generate synthetic samples
-
-Achieves balanced distribution across all 3 risk categories
-
-🤖 Machine Learning Models Used
-
-Seven classification models were trained and compared:
-
-Logistic Regression
-
-Support Vector Machine (SVM – RBF kernel)
-
-Artificial Neural Network (ANN)
-
-AdaBoost
-
-XGBoost
-
-LightGBM
-
-Random Forest
-
-🎯 Best performer:
-Random Forest Classifier — 93% Accuracy
-
-📈 Regression Models
-
-To estimate continuous fluoride concentration, three regressors were tested:
+Three regression models were tested:
 
 Model	R² Score	RMSE
 Linear Regression	0.218	0.709
 Random Forest Regressor	0.273	0.684
-SVR (RBF)	0.174	0.729
+SVR	0.174	0.729
 
-🏆 Best model: Random Forest Regressor
+🏅 Best Model: Random Forest Regressor
+Used for predicting continuous fluoride values across the dataset.
 
-Predicted fluoride values are fed into the fuzzy logic system for further interpretation.
+🌡️ Fuzzy Logic Risk Classification
 
-🧠 Fuzzy Logic Risk Classification
+A Mamdani-type Fuzzy Inference System assigns human-friendly risk labels.
 
-A Mamdani-type Fuzzy Inference System (FIS) was developed for interpretable risk scoring.
-
-Fuzzy Input Categories (Fluoride):
+🏷 Input Memberships (Fluoride):
 
 Very Low
 
@@ -119,7 +110,7 @@ High
 
 Very High
 
-Fuzzy Output Categories (Risk Score):
+🟦 Output Memberships (Risk Score):
 
 Low Risk
 
@@ -127,7 +118,7 @@ Medium Risk
 
 High Risk
 
-Sample Fuzzy Rules:
+📜 Example Fuzzy Rules:
 
 If Fluoride is Very High → Risk is High
 
@@ -135,76 +126,62 @@ If Fluoride is Normal → Risk is Low
 
 If Fluoride is Low → Risk is Medium
 
-Final risk labels:
+🧮 Final Labels:
+Risk Score	Category
+< 33	Low
+33–66	Medium
+≥ 66	High
+📊 Key Results
+✔ ML Performance
 
-Low Risk: score < 33
+93% accuracy
 
-Medium Risk: 33–66
+Low misclassification
 
-High Risk: > 66
+Stable precision and recall
 
-📊 Results
-✔ Machine Learning Classification
+✔ Fuzzy Interpretation
 
-Best Accuracy: 93%
+Generates state-wise risk maps
 
-High precision, recall, and F1-score for all classes
+Produces score distributions
 
-Confusion matrix shows minimal cross-class error
+Improves human understanding of risk levels
 
-✔ Regression
+✔ Combined System
 
-Random Forest Regressor chosen for final fluoride prediction
-
-✔ Fuzzy Logic
-
-Generates risk heatmaps
-
-Computes state-wise mean risk score
-
-Produces overall risk distribution
+Machine Learning + Fuzzy Logic =
+Accurate + Interpretable + Scalable groundwater risk assessment
 
 ⚠️ Limitations
 
-Dataset originally imbalanced
+🔸 Dataset originally imbalanced
+🔸 Missing contaminants (e.g., heavy metals)
+🔸 No temporal (seasonal) variations
+🔸 Spatial hydrogeology not explicitly included
 
-Does not include contaminants like heavy metals, perchlorates, etc.
+🔮 Future Directions
 
-No temporal or seasonal variation included
+✨ Add GIS heatmaps
+✨ Integrate deep learning
+✨ Predict multiple contaminants
+✨ Use explainable AI (SHAP/LIME)
+✨ Build real-time dashboards
 
-Spatial hydrogeology not explicitly modeled
-
-🔮 Future Enhancements
-
-Integration with GIS maps for spatial visualization
-
-Multi-contaminant groundwater quality prediction
-
-Use of Deep Learning and hybrid ML–geostatistical models
-
-Explainability tools (SHAP, LIME)
-
-Real-time automated monitoring pipeline
-
-🏁 Conclusion
-
-This project presents a powerful data-driven framework that combines Machine Learning and Fuzzy Logic to accurately classify groundwater fluoride levels and assess risk across India.
-The system supports policymakers, researchers, and water authorities in identifying unsafe regions and improving groundwater safety.
-
-📜 How to Run the Project
+📥 Installation & Usage
 # Clone the repository
 git clone https://github.com/USERNAME/REPOSITORY
 
-# Navigate to project folder
+# Navigate into project folder
 cd REPOSITORY
 
-# Install required packages
+# Install dependencies
 pip install -r requirements.txt
 
-# Run the main script
+# Run the main pipeline
 python main.py
-🤝 Contributors
 
-Aishwarya Para (2023BMS-022)
+👥 Contributors
 
-Nihita Kolukula (2023BMS-015)
+👩‍💻 Aishwarya Para (2023BMS-022)
+👩‍💻 Nihita Kolukula (2023BMS-015)
