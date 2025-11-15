@@ -1,187 +1,231 @@
-🎯 Groundwater Fluoride Prediction Using Machine Learning & Fuzzy Logic
+💧 Predicting Groundwater Fluoride Levels — Machine Learning & Fuzzy Logic
 
-A data-driven, intelligent, and scalable framework to analyze groundwater fluoride contamination across India using Machine Learning, Regression Models, and a Fuzzy Inference System (FIS).
-This system supports early detection of fluoride-vulnerable regions and helps government agencies & water-resource managers make informed decisions.
+A data-driven, interpretable groundwater quality assessment project
 
-🌍 Project At a Glance
+💡 Overview
 
-✔ Analyzes 16,776+ groundwater samples from Indian states & districts
-✔ Predicts fluoride levels using Regression Models
-✔ Classifies water into Safe / Moderate / High-risk categories using ML
-✔ Uses Fuzzy Logic for human-interpretable risk scoring
-✔ Generates state-level analysis & heatmaps
-✔ Built for accuracy, interpretability, and large-scale deployment
+This project builds an integrated framework that combines Machine Learning, Regression models, and a Mamdani-type Fuzzy Inference System (FIS) to:
 
-🧠 Why This Project?
+Predict continuous fluoride concentrations in groundwater, and
 
-Fluoride contamination is a growing threat in Indian groundwater. Traditional testing is slow, costly, and region-limited.
-This project solves that by combining:
+Classify sampling sites into Safe / Moderate / High-risk categories
 
-🔹 Hydrogeochemical science
-🔹 Machine Learning
-🔹 Fuzzy Logic interpretation
+Using a dataset of ~16,776 groundwater samples collected across Indian states and union territories, the system is designed for accuracy, interpretability, and scalability — helping policy makers and water managers prioritize interventions.
 
-→ delivering a fast, flexible, and reliable digital solution.
+Repository: https://github.com/Nihita123/Fuzzy-Project
 
-📂 Dataset Overview
+🧩 Key Features
 
-Each record contains:
+📈 Classification: Random Forest, XGBoost, LightGBM, SVM, Logistic Regression, AdaBoost, ANN
 
-Feature Type	Parameters
-Physicochemical	pH, EC, TDS, Na⁺, Ca²⁺, Mg²⁺, K⁺, Cl⁻, SO₄²⁻, NO₃⁻, HCO₃⁻
-Target	Fluoride concentration (mg/L)
-Location	State + District identifiers
+🔬 Regression: Random Forest Regressor, Linear Regression, SVR (to predict fluoride mg/L)
 
-These features significantly impact fluoride mobility inside aquifers.
+🧠 Fuzzy Inference System: Mamdani FIS produces a 0–100 risk score and Low/Medium/High labels
 
-⚙️ Data Preprocessing Pipeline
-🔧 1. Standardization
+🔁 Data Pipeline: Standardization, median imputation, Min–Max scaling, One-Hot encoding
 
-Cleans and normalizes column names (e.g., “EC µS/cm” → “EC”).
+⚖️ Class Balance: SMOTE to address class imbalance (final balanced dataset = 16,776 samples)
 
-🧹 2. Invalid & Missing Values
+📊 State-level aggregation & visualization: Mean fluoride, mean fuzzy risk score, label distributions
 
-Converts “NA”, “–”, blanks to NaN
+♻️ Reproducible preprocessing objects saved for deployment (scaler, imputer, encoders)
 
-Uses Median Imputation for numerical stability
+📂 Project Structure
+Fuzzy-Project/
+├── data/
+│   ├── raw/                     # raw CSVs (if available)
+│   └── processed/               # processed model-ready dataset
+├── notebooks/
+│   ├── 01_data_preprocessing.ipynb
+│   ├── 02_classification_models.ipynb
+│   ├── 03_regression_models.ipynb
+│   └── 04_fuzzy_logic_and_aggregation.ipynb
+├── src/
+│   ├── preprocessing.py
+│   ├── models/
+│   │   ├── train_classifiers.py
+│   │   ├── train_regressors.py
+│   │   └── evaluate.py
+│   ├── fuzzy/
+│   │   └── fuzzy_system.py
+│   └── visualization.py
+├── saved_objects/
+│   ├── scaler.pkl
+│   ├── imputer.pkl
+│   └── classifier_best.pkl
+├── reports/
+│   └── FUZZY_REPORT.pdf
+├── requirements.txt
+└── README.md
 
-🧪 3. Fluoride Risk Label Creation
+🛠️ Libraries & Tools
+Library	Purpose
+Python	Core language
+pandas, numpy	Data handling & numeric ops
+scikit-learn	ML models, evaluation, SMOTE
+xgboost, lightgbm	Gradient boosting models
+scikit-fuzzy / skfuzzy	Fuzzy membership & Mamdani FIS
+matplotlib / seaborn	Plots & visualizations
+joblib / pickle	Save preprocessing & models
+⚙️ Data Preprocessing (Concise)
 
-Based on WHO drinking water standards:
+Column standardization — unify names, remove units/symbols.
 
-Class	Fluoride Level	Interpretation
-0	< 1.5 mg/L	Safe
-1	1.5–2.5 mg/L	Moderate Risk
-2	> 2.5 mg/L	High Risk
-📏 4. Scaling
+Invalid→NaN — convert placeholders (NA, “—”) to NaN.
 
-All features normalized to 0–1 range (Min–Max).
+Median imputation — fill numeric missings.
 
-🧩 5. Encode Categorical Features
+Create risk classes (WHO-based):
 
-Uses One-Hot Encoding for state/district/well-type.
+Class 0: F < 1.5 mg/L (Safe)
 
-⚖️ 6. Balancing the Dataset (SMOTE)
+Class 1: 1.5 ≤ F ≤ 2.5 mg/L (Moderate)
 
-Generates synthetic minority samples → class distribution becomes perfectly balanced.
+Class 2: F > 2.5 mg/L (High Risk)
 
-🤖 Machine Learning Models Implemented
+Min–Max scaling to [0,1].
 
-Seven ML algorithms were trained:
+One-Hot encode categorical fields (state, district, well-type).
 
-Model	Type	Notes
-Logistic Regression	Linear	Baseline clarity
-SVM (RBF)	Kernel	Captures nonlinearity
-ANN	Neural Network	Learns complex patterns
-AdaBoost	Ensemble	Focuses on hard samples
-XGBoost	Gradient Boosting	Fast + accurate
-LightGBM	Boosting	Efficient, large-scale
-Random Forest	Ensemble	⭐ Best classifier
-🏆 Top Performer: Random Forest Classifier
+SMOTE to balance classes → split 70% train / 30% test.
 
-🎯 Accuracy: 93%
-🎯 Strong precision, recall, and F1 across all classes
+🤖 Models & Metrics (Highlights)
+Classification (best results)
 
-📈 Regression Models for Continuous Prediction
+Best classifier: Random Forest — ~93% accuracy
 
-Three regression models were tested:
+Classification report (best model):
 
-Model	R² Score	RMSE
+Class 0 (Low): Precision 0.94, Recall 0.93, F1 0.93
+
+Class 1 (Med): Precision 0.91, Recall 0.91, F1 0.91
+
+Class 2 (High): Precision 0.93, Recall 0.94, F1 0.94
+
+Confusion matrix showed most misclassifications occur between adjacent classes (Low ↔ Medium).
+
+Regression
+Model	R²	RMSE
 Linear Regression	0.218	0.709
 Random Forest Regressor	0.273	0.684
-SVR	0.174	0.729
+SVR (RBF)	0.174	0.729
 
-🏅 Best Model: Random Forest Regressor
-Used for predicting continuous fluoride values across the dataset.
+Chosen regressor: Random Forest Regressor (best R² / lowest RMSE)
 
-🌡️ Fuzzy Logic Risk Classification
+🧭 Fuzzy Logic System
 
-A Mamdani-type Fuzzy Inference System assigns human-friendly risk labels.
+Input: Predicted fluoride concentration (range 0–4 mg/L)
 
-🏷 Input Memberships (Fluoride):
+Input fuzzy sets: Very Low, Low, Normal, High, Very High (triangular MFs)
 
-Very Low
+Output fuzzy sets: Low Risk, Medium Risk, High Risk (0–100 score)
 
-Low
+Rules: Example – If Fluoride is Very High → Risk is High
 
-Normal
+Defuzzification: Centroid method → crisp risk score (0–100)
 
-High
+Label thresholds:
 
-Very High
+Low Risk: score < 33
 
-🟦 Output Memberships (Risk Score):
+Medium Risk: 33 ≤ score < 66
 
-Low Risk
+High Risk: score ≥ 66
 
-Medium Risk
+📊 Sample Results & Visuals
 
-High Risk
+Physicochemical summary (excerpt):
 
-📜 Example Fuzzy Rules:
+Parameter	Min	Max	Mean
+pH	2.54	9.85	7.69
+EC (µS/cm)	12	84660	1298.10
+F⁻ (mg/L)	0	22	0.74
 
-If Fluoride is Very High → Risk is High
+Visual outputs included:
 
-If Fluoride is Normal → Risk is Low
+ROC curves for different classifiers
 
-If Fluoride is Low → Risk is Medium
+Confusion matrix heatmap
 
-🧮 Final Labels:
-Risk Score	Category
-< 33	Low
-33–66	Medium
-≥ 66	High
-📊 Key Results
-✔ ML Performance
+Fuzzy risk heatmap & state-wise risk distribution plots
 
-93% accuracy
+(Plots available in notebooks/ and reports/FUZZY_REPORT.pdf)
 
-Low misclassification
+📈 Decision Rules (Example)
 
-Stable precision and recall
+If ≥ 0.66 predicted fluoride (mg/L) and fuzzy risk score ≥ 66 → High Risk
 
-✔ Fuzzy Interpretation
+If majority of neighboring samples in same state show high fuzzy risk → flag state-level alert
 
-Generates state-wise risk maps
+These rules are configurable in src/fuzzy/fuzzy_system.py.
 
-Produces score distributions
+🚀 How to Run
 
-Improves human understanding of risk levels
+Clone the repo
 
-✔ Combined System
+git clone https://github.com/Nihita123/Fuzzy-Project.git
+cd Fuzzy-Project
 
-Machine Learning + Fuzzy Logic =
-Accurate + Interpretable + Scalable groundwater risk assessment
+
+Create virtual env & install
+
+python -m venv venv
+source venv/bin/activate     # on Linux/macOS
+# .\venv\Scripts\activate    # on Windows
+pip install -r requirements.txt
+
+
+Preprocess & train (notebooks or scripts)
+
+Option A — run notebooks:
+
+Open Jupyter: jupyter notebook
+
+Run 01_data_preprocessing.ipynb → 02_classification_models.ipynb → 03_regression_models.ipynb → 04_fuzzy_logic_and_aggregation.ipynb
+
+Option B — run scripts:
+
+python src/preprocessing.py
+python src/models/train_classifiers.py
+python src/models/train_regressors.py
+python src/fuzzy/fuzzy_system.py
+
+
+View results & visualizations
+
+Outputs and plots are saved under reports/ and plots/.
+
+🧪 Reproducibility & Deployment
+
+Preprocessing objects (scaler, imputer, encoders) are saved as pickles under saved_objects/ for consistent inference.
+
+The trained classifier and regressor pickles are also saved for deployment.
+
+For production, wrap prediction + FIS in an API (FastAPI/Flask) and serve with the saved objects.
 
 ⚠️ Limitations
 
-🔸 Dataset originally imbalanced
-🔸 Missing contaminants (e.g., heavy metals)
-🔸 No temporal (seasonal) variations
-🔸 Spatial hydrogeology not explicitly included
+Original raw dataset imbalance (handled by SMOTE but still a caution).
 
-🔮 Future Directions
+No seasonal / temporal features included — cannot capture monsoon/seasonal shifts.
 
-✨ Add GIS heatmaps
-✨ Integrate deep learning
-✨ Predict multiple contaminants
-✨ Use explainable AI (SHAP/LIME)
-✨ Build real-time dashboards
+Not all contaminants present (heavy metals, perchlorates, etc.) — single-contaminant focus.
 
-📥 Installation & Usage
-# Clone the repository
-git clone https://github.com/USERNAME/REPOSITORY
+Spatial hydrogeological characteristics (aquifer depth, lithology) not explicitly modeled.
 
-# Navigate into project folder
-cd REPOSITORY
+🔮 Future Work
 
-# Install dependencies
-pip install -r requirements.txt
+Integrate GIS mapping and spatial interpolation (kriging) for continuous contamination maps.
 
-# Run the main pipeline
-python main.py
+Add temporal datasets to model seasonal trends.
+
+Expand to multi-contaminant assessment (e.g., fluoride + nitrate + heavy metals).
+
+Apply explainable AI (SHAP/LIME) for per-sample feature attribution.
+
+Create a web dashboard (Dash / Streamlit) for interactive state-level monitoring.
 
 👥 Contributors
-
-👩‍💻 Aishwarya Para (2023BMS-022)
-👩‍💻 Nihita Kolukula (2023BMS-015)
+Name	Role
+Nihita Kolukula	Core modeling, fuzzy system, report
+Aishwarya Para	Data preprocessing, visualizations, documentation
